@@ -3,7 +3,12 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"time"
 	dbConfig "userservice/config/db"
+	"userservice/controllers"
+	repo "userservice/db/repositories"
+	"userservice/router"
+	"userservice/services"
 
 	config "userservice/config/env"
 )
@@ -45,10 +50,18 @@ func (app *Application) Run() error {
 		fmt.Println("Error setting up database:", err)
 		return err
 	}
+	ur := repo.NewUserRepository(db)
+	us := services.NewUserService(ur)
+	uc := controllers.NewUserController(us)
+	uRouter := router.NewUserRouter(uc)
+
 	fmt.Println("db:", db)
 	fmt.Println("Starting server on", app.Config.Addr)
 	server := &http.Server{
-		Addr: app.Config.Addr,
+		Addr:         app.Config.Addr,
+		Handler:      router.SetupRouter(uRouter),
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	return server.ListenAndServe()
 }
