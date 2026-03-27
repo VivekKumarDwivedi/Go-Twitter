@@ -7,6 +7,7 @@ import (
 	"userservice/middlewares"
 	"userservice/services"
 	"userservice/utils"
+	"github.com/go-chi/chi/v5"
 )
 
 type UserController struct {
@@ -69,4 +70,39 @@ func (uc *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJsonSuccessResponse(w, http.StatusCreated, "User created successfully", user)
 	fmt.Println("user created successfully:", user)
+}
+
+func (uc *UserController) LoginUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Login user called in usercontroller\n")
+	payload := r.Context().Value(middlewares.PayloadKey).(dto.LoginUserRequestDTO)
+
+	fmt.Println("Payload received:", payload)
+
+	jwtToken, err := uc.UserService.LoginUser(&payload)
+
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError, "Failed to login user", err)
+		return
+	}
+
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User logged in successfully", jwtToken)
+}
+
+func (uc *UserController) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Delete user called in usercontroller\n")
+
+	userId := chi.URLParam(r, "id")
+
+	if userId == ""{
+		utils.WriteJsonErrorResponse(w,http.StatusBadRequest,"User id required",fmt.Errorf("missing user id"))
+		return
+	}
+	err := uc.UserService.DeleteUser(userId)
+
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError, "Failed to delete user", err)
+		return
+	}
+
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User deleted successfully", nil)
 }

@@ -11,6 +11,7 @@ type UserRepository interface {
 	CreateUser(username string, email string, password string) (*models.User, error)
 	GetUserByID(id string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
+	DeleteUser(id string) error
 }
 
 type UserRepositoryImpl struct {
@@ -107,4 +108,30 @@ func (r *UserRepositoryImpl) GetUserByEmail(email string) (*models.User, error) 
 		}
 	}
 	return user, nil
+}
+
+func (r *UserRepositoryImpl) DeleteUser(id string) error {
+	query := `DELETE FROM users WHERE id=?`
+
+	result, err := r.db.Exec(query, id)
+
+	if err != nil {
+		fmt.Println("error deleting user:", err)
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		fmt.Println("error getting rows affected:", err)
+		return err
+	}
+
+	if rowsAffected == 0 {
+		fmt.Println("No user found with the given id")
+		return fmt.Errorf("no user found with the given id: %s", id)
+	}
+
+	fmt.Println("user deleted successfully")
+	return nil
 }
