@@ -21,4 +21,5 @@ func (ur *UserRouter) Register(r chi.Router) {
 	r.With(middlewares.CreateUserRequestVaildator).Post("/signup", ur.UserController.CreateUser)
 	r.With(middlewares.JWTAuthMiddleware).Get("/user/{id}", ur.UserController.GetUserByID)
 	r.Delete("/user/{id}", ur.UserController.DeleteUser)
+	r.With(middlewares.JWTAuthMiddleware, middlewares.UpdateUserRequestVaildator).Put("/user/{id}", ur.UserController.UpdateUser)
 }

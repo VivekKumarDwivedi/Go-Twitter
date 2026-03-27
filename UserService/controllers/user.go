@@ -106,3 +106,25 @@ func (uc *UserController) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User deleted successfully", nil)
 }
+
+func (uc *UserController) UpdateUser(w http.ResponseWriter, r *http.Request){
+	fmt.Printf("Update user called in usercontroller\n")
+
+	userId := chi.URLParam(r,"id")
+	if userId == ""{
+		utils.WriteJsonErrorResponse(w,http.StatusBadRequest,"User id required",fmt.Errorf("missing user id"))
+		return
+	}
+
+	payload := r.Context().Value(middlewares.PayloadKey).(dto.UpdateUserRequestDTO)
+
+	user, err := uc.UserService.UpdateUser(userId, &payload)
+	
+	if err != nil {
+		utils.WriteJsonErrorResponse(w, http.StatusInternalServerError, "Failed to update user", err)
+		return
+	}
+	
+	utils.WriteJsonSuccessResponse(w, http.StatusOK, "User updated successfully", user)
+	
+}

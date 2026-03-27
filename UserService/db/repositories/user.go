@@ -12,6 +12,7 @@ type UserRepository interface {
 	GetUserByID(id string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
 	DeleteUser(id string) error
+	UpdateUser(id string, username string, email string) (*models.User, error)
 }
 
 type UserRepositoryImpl struct {
@@ -134,4 +135,33 @@ func (r *UserRepositoryImpl) DeleteUser(id string) error {
 
 	fmt.Println("user deleted successfully")
 	return nil
+}
+
+func (r *UserRepositoryImpl) UpdateUser(id string, username string, email string)(*models.User, error){
+
+		query := `UPDATE users SET username=?, email=?, updatedAt=? WHERE id=?`
+		
+		currentTime := time.Now().Format("2006-01-02 15:04:05")
+
+		result, err := r.db.Exec(query, username, email, currentTime, id)
+		
+		if err != nil {
+			fmt.Println("error updating user:", err)
+			return nil, err
+		}
+		
+		rowsAffected, err := result.RowsAffected()
+		
+		if err != nil {
+			fmt.Println("error getting rows affected:", err)
+			return nil, err
+		}
+		
+		if rowsAffected == 0 {
+			fmt.Println("No user found with the given id")
+			return nil, fmt.Errorf("no user found with the given id: %s", id)
+		}
+		
+		fmt.Println("user updated successfully")
+		return r.GetUserByID(id)
 }

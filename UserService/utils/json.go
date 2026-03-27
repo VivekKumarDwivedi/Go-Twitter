@@ -18,7 +18,7 @@ func NewValidator() *validator.Validate {
 }
 
 func WriteJsonResponse(w http.ResponseWriter, status int, data any) error {
-	w.Header().Set("context-type", "application/json")
+	w.Header().Set("content-type", "application/json")
 
 	w.WriteHeader(status) //set http status code
 

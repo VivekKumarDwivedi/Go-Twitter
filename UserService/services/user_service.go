@@ -15,6 +15,7 @@ type UserService interface {
 	CreateUser(payload *dto.CreateUserDTO) (*models.User, error)
 	LoginUser(payload *dto.LoginUserRequestDTO) (string, error)
 	DeleteUser(id string) error
+	UpdateUser(id string, payload *dto.UpdateUserRequestDTO) (*models.User, error)
 }
 
 type UserServiceImpl struct {
@@ -115,5 +116,12 @@ func (r *UserServiceImpl) DeleteUser(id string) error {
 	fmt.Println("Deleting user in UserService")
 		
 	return r.userRepository.DeleteUser(id)
+	
+}
+
+func (r *UserServiceImpl) UpdateUser(id string, payload *dto.UpdateUserRequestDTO) (*models.User, error) {
+	fmt.Println("Updating user in UserService")
+	
+	return r.userRepository.UpdateUser(id, payload.Username, payload.Email)
 	
 }
