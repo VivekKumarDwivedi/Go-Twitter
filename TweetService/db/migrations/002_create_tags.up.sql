@@ -7,7 +7,7 @@ Create table tags(
 
 -- Create association table between tweets and tags
 Create table tweet_tags(
-	tweet_id bigint unsigned not null,
+	tweet_id  bigint unsigned not null,
     tag_id bigint unsigned not null,
     primary key(tweet_id,tag_id),
     foreign key (tweet_id) references tweets(id),
