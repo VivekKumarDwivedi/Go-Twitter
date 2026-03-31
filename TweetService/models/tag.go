@@ -1,22 +1,14 @@
-package dto
+package models
 
-type TagResponseDTO struct {
-    ID    int    `json:"id"`
-    Name  string `json:"name"`
-    Count int    `json:"count,omitempty"` // usage count, optional
+
+type Tag struct {
+    ID        int     `json:"id"`
+    Name      string    `json:"name"`
+    Count     int     `json:"count,omitempty"` // optional: used when fetching top tags
+    CreatedAt string    `json:"created_at,omitempty"`
+    UpdatedAt string    `json:"updated_at,omitempty"`
 }
-
-type CreateTagRequestDTO struct {
-    Name string `json:"name"`
+type TweetTag struct {
+    TweetID int `json:"tweet_id"`
+    TagID   int `json:"tag_id"`
 }
-
-type UpdateTagRequestDTO struct {
-    Name string `json:"name"`
-}
-
-type TagWithTweetsResponseDTO struct {
-    ID     int                 `json:"id"`
-    Name   string              `json:"name"`
-    Tweets []TweetResponseDTO  `json:"tweets"`
-}
-

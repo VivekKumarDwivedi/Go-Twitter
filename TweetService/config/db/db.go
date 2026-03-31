@@ -2,19 +2,20 @@ package config
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
-	"TweetService/config/env"
+	"fmt"
+	mysql "github.com/go-sql-driver/mysql"
+	env "TweetService/config/env"
 )
 
 func SetupDB() (*sql.DB, error){
 	cfg := mysql.NewConfig()
 	cfg.User = env.GetString("DB_USER", "root")
 	cfg.Passwd = env.GetString("DB_PASS", "root")
-	cfg.DBName = env.GetString("DB_NAME", "userservice")
+	cfg.DBName = env.GetString("DB_NAME", "tweetservice")
 	cfg.Addr = env.GetString("DB_ADDR", "localhost:3306")
 	cfg.Net = env.GetString("DB_NET","tcp")
 
-	fmt.Println("Connecting to database:",cfg.DB_NAME,cfg.FormatDSN())
+	fmt.Println("Connecting to database:",cfg.DBName,cfg.FormatDSN())
 
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 
@@ -31,6 +32,6 @@ func SetupDB() (*sql.DB, error){
 		return nil,pingErr
 	}
 
-	fmt.Println("Database connected successfully",cfg.DB_NAME)
+	fmt.Println("Database connected successfully",cfg.DBName)
 	return db,nil
 }

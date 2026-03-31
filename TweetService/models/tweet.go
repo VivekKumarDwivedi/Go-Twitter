@@ -8,12 +8,3 @@ type Tweet struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-type Tag struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type TweetTag struct {
-	TweetID int `json:"tweet_id"`
-	TagID   int `json:"tag_id"`
-}
